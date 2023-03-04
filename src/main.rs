@@ -1,12 +1,20 @@
+pub mod cli;
+pub mod compressor;
+
 fn main() {
-    let jpeg_data = std::fs::read("examples/parrots.jpg")?;
-
-    // decompress `jpeg_data` into an `image::RgbImage`
-    let image: image::RgbImage = turbojpeg::decompress_image(&jpeg_data)?;
-
-    // compress `image` into JPEG with quality 95 and 2x2 chrominance subsampling
-    let jpeg_data = turbojpeg::compress_image(&image, 95, turbojpeg::Subsamp::Sub2x2)?;
-
-    // save compressed JPEG to a file
-    std::fs::write("examples/parrots-compressed.jpg", &jpeg_data)?;
+    let args = cli::Cli::new();
+    let is_file: bool = args.source.is_file();
+    let mut paths: Vec<std::path::PathBuf> = Vec::new();
+    if is_file {
+        paths.push(args.source);
+    } else {
+        let mut dir = std::fs::read_dir(args.source).unwrap();
+        while let Some(Ok(entry)) = dir.next() {
+            if entry.path().is_file() {
+                paths.push(entry.path());
+            }
+        }
+    }
+    let compressor = compressor::Compress::new(paths, args.destination);
+    compressor.compress();
 }
