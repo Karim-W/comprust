@@ -15,6 +15,11 @@ fn main() {
             }
         }
     }
-    let compressor = compressor::Compress::new(paths, args.destination);
+    let compressor = compressor::Compress::new(
+        paths, 
+        args.destination, 
+        args.quality, 
+        args.size,
+    );
     compressor.compress();
 }

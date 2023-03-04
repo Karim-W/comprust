@@ -8,6 +8,8 @@ use clap::Parser;
 pub struct Cli {
     pub source: PathBuf,
     pub destination: PathBuf,
+    pub quality: f32,
+    pub size:f32,
 }
 
 impl Cli {
